@@ -6,21 +6,58 @@ import { Directive, ElementRef, HostListener} from '@angular/core';
 export class TtsDirectiveDirective {
 
   constructor(private el: ElementRef) { }
+  private text = '';
+
+  extractText(element: HTMLElement, clikedElementClasse: string) {
+
+    let children = Array.from(element.childNodes);
+    this.text = '';
+
+    for (let child of children){
+      let el = child as HTMLElement;
+      if(el.className != clikedElementClasse){
+        this.text += el.innerText
+      }
+    }
+    
+
+   //for (let child of children) {
+    //if (child)
+      // if (child.nodeType === Node.TEXT_NODE){
+      //   this.text += child.nodeValue;
+      //   console.log("text node: " + this.text);
+        
+        
+      // }else if (child.nodeType === Node.ELEMENT_NODE){
+      //   const el = child as HTMLElement;
+      //  if (el.className != clikedElementClasse) {
+      //     this.text += this.extractText(el, clikedElementClasse)
+      //     console.log("text element node : " + this.text);
+          
+      //   }
+      // }
+  //}
+    console.log("children : " + children);
+    console.log("text methode : " + this.text);
+    
+    return this.text;
+    
+    
+
+  }
+
 
   @HostListener('click', ['$event']) onClick(event: Event) {
     
-    console.log("el : " + this.el);
-    console.log("event : " + event);
-    
-    
     const clikedElement = event.target as HTMLElement
-    let text = '';
-
-    if (clikedElement && clikedElement.id === 'btnListen'){
+    let test = this.el.nativeElement.innerText;
+    console.log("test : " + test);
+    
+    if (clikedElement && clikedElement.className === 'btnListen'){
       event.stopPropagation();
-      text = extractText(this.el.nativeElement, clikedElement.id)
+      this.text = this.extractText(this.el.nativeElement, clikedElement.className)
     }
-    console.log("text : " + text);
+    console.log("text : " + this.text);
     console.log("native element : " + this.el.nativeElement);
     
     
@@ -30,7 +67,7 @@ export class TtsDirectiveDirective {
       headers: {
         'Content-Type': 'application/json'
       },
-      body: JSON.stringify({ text: text })
+      body: JSON.stringify({ text: this.text })
       
     })
     //recois une repons sous forme de fichier audio
@@ -45,32 +82,32 @@ export class TtsDirectiveDirective {
     });
 
     //fonction pour recuperer le text contenue dans la div.
-    function extractText(element: HTMLElement, clikedElementID: string) {
+    // function extractText(element: HTMLElement, clikedElementID: string) {
 
-      let text = ' ';
-      let children = Array.from(element.childNodes);
+    //   let text = ' ';
+    //   let children = Array.from(element.childNodes);
 
-     for (let child of children) {
-        if (child.nodeType === Node.TEXT_NODE){
-          text += child.nodeValue;
-          console.log("text node: " + text);
+    //  for (let child of children) {
+    //     if (child.nodeType === Node.TEXT_NODE){
+    //       text += child.nodeValue;
+    //       console.log("text node: " + text);
           
           
-        }else if (child.nodeType === Node.ELEMENT_NODE){
-          const el = child as HTMLElement;
-         if (el.id != clikedElementID) {
-            text += extractText(el, clikedElementID)
-            console.log("text element node : " + text);
+    //     }else if (child.nodeType === Node.ELEMENT_NODE){
+    //       const el = child as HTMLElement;
+    //      if (el.id != clikedElementID) {
+    //         text += extractText(el, clikedElementID)
+    //         console.log("text element node : " + text);
             
-          }
-        }
-    }
-      console.log("children : " + children);
-      return text;
+    //       }
+    //     }
+    // }
+    //   console.log("children : " + children);
+    //   return text;
       
       
 
-    }
+    // }
 
     
 
